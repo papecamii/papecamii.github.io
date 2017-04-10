@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+  <!-- This meta tag will auto-refresh the whole page. 60 sec/min * 60 min/hour * 6 hours = 21,600 sec(s).-->
+  <meta http-equiv="refresh" content="21600">
+  <title>Bosnian Islamic Centre | Prayer Clock</title>
+
+  <!-- Bootstrap -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <!-- PapaParse CDN || papaparse is used to extract the numbers for the days prayer times. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
+
+  <script>
+    var DJHeading = ['Dhuhr', 'Jumua'], i = 0;
+    function changeDJ() {
+      i = (i > 0) ? 0 : 1;
+      document.getElementById('djcarousel').innerHTML = DJHeading[i];
+      setTimeout(changeDJ, 8000);
+    }
+    function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        var timeSuffix = h >= 12 ? 'PM' : 'AM';
+        h = checkHour(h);
+        console.log(h);
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById("time").innerHTML =
+        h + ":" + m + "<small class=\"text-muted\";'>:" + s + " " + timeSuffix + "</small>";
+
+        var options = {'weekday':'long', month: 'long', day: 'numeric', year: 'numeric'};
+        document.getElementById('islamicDate').innerHTML = today.toLocaleDateString('en-US-u-ca-islamic', options);
+        document.getElementById('date').innerHTML = today.toLocaleDateString('en-US', options);
+        var t = setTimeout(startTime, 500);
+    }
+    function checkHour(i) {
+        if (i > 12) {i = i - 12;} // converting to 12 hour format
+        return i;
+    }
+    function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+    }
+  </script>
+</head>
+<body onload="startTime()">
+    <div class="container-fluid">
+      <!--<span class="navbar-text navbar-center"><b class="text-success">Bosnian Islamic Centre</b></span>-->
+      <div class="navbar navbar-default navbar-static-top">
+        <span class="navbar-text"><b class="label label-success" id="date">| Date Here |</b></span>
+        <span class="navbar-text navbar-right"><b class="label label-success" id="islamicDate">| Islamic Date Here |</b></span>
+      </div>
+    </div>
+
+  <div class="container-fluid">
+    <div class="row  text-center">
+      <div class="col-md-4">
+        <div class="panel panel-warning">
+          <div class="panel-heading">Shuruq</div>
+          <div class="panel-body" id="sunrise">00:00 AM</div>
+        </div>
+      </div>
+
+      <div class="col-md-2 col-md-offset-1">
+        <img src="Bismillah.png" class="img-responsive">
+      </div>
+
+      <div class="col-md-4 pull-right">
+        <div class="panel panel-warning">
+          <div class="panel-heading">Jumu'a</div>
+          <div class="panel-body" id="jumua">1:30 pm</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row text-center">
+      <div class="col-md-12 panel panel-default">
+        <div class="panel-body" id="time">5:10 PM</div>
+      </div>
+    </div>
+
+    <div class="row text-center">
+      <div class="col-md-2">
+        <div class="panel panel-success">
+          <div class="panel-heading">Fajr</div>
+          <div class="panel-body" id="fajr">00:00 AM</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="panel panel-success">
+          <div class="panel-heading">Dhuhr</div>
+          <div class="panel-body" id="dhuhr">00:00 PM</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="panel panel-success">
+          <div class="panel-heading">Asr</div>
+          <div class="panel-body" id="asr">00:00 PM</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="panel panel-success">
+          <div class="panel-heading">Maghrib</div>
+          <div class="panel-body" id="maghrib">00:00 PM</div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="panel panel-success">
+          <div class="panel-heading">Isha</div>
+          <div class="panel-body" id="isha">00:00 PM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  Papa.parse("data.csv", {
+    download: true,
+    dynamicTyping: true,
+    header: true,
+    complete: function(results) {
+      console.log("Parsing complete: Full Result", results.data);
+      console.log("Parsing complete: first object", results.data[0]["prayer_date"]);
+
+      // Calculating number of days elapsed since the start of the year.
+      start = new Date("January 1, 2016");
+      today = new Date();
+      var one_day = 1000 * 60 * 60 * 24;
+
+      // taking the difference and using floor from Math to round down to whole #.
+      // If we use ceiling, it might jump to next day half way through the day.
+      var number_of_days_elapsed = Math.floor((today.getTime() - start.getTime()) / one_day);
+      console.log(number_of_days_elapsed + "days elapsed.")
+
+      // Accessing prayer times, and writing to DOM innerHTML.
+      // Internal Mohid csv template keys/headers for access of each prayer time.
+      salatKey = ['fajr_azaan', 'sunrise', 'duhar_azaan', 'asr_azaan', 'maghrib_azaan', 'isha_azaan'];
+
+      // div Id for element selection.
+      salatId = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+      for (i = 0; i < 6; i++) {
+        // creating the dataString to init new Date object for each prayer time.
+        // Allows for easier manipulation of the data from string to date object.
+        // gives me access to getHours() and getMinutes() methods.
+        var dataString = "March 09, 2016";
+        dataString = dataString + " " + results.data[number_of_days_elapsed][salatKey[i]];
+
+        var newDate = new Date(dataString);
+        var hour = newDate.getHours();
+        var minutes = newDate.getMinutes();
+        var timeSuffix = "AM";
+
+        // function to check whether or not hours are above 12 PM and to modify suffix accordingly.
+        function checkHours(z) {
+          if (z >= 12) {
+            if (z == 12) {
+              timeSuffix = "PM";
+            } else {
+              z = z - 12;
+              timeSuffix = "PM";
+              hour = z;
+            }
+          }
+        }
+        checkHours(hour);
+        // if (hour < 10) {hour = "0" + hour};
+        console.log(hour);
+
+        // using the salatId[i] to access each div and write the proper prayer time.
+        if(salatId[i] == 'sunrise') {
+          document.getElementById(salatId[i]).innerHTML = hour + ":" + minutes + " am";
+        } else {
+          document.getElementById(salatId[i]).innerHTML = hour + ":" + minutes;
+        }
+      }
+    }
+  });
+</script>
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>

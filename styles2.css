@@ -1,0 +1,47 @@
+.col-md-2 {
+  width:20%;
+}
+.navbar-text {
+  font-size:2.4285714286em;
+}
+.panel-success {
+  border-color: #3c763d;
+}
+.panel-success>.panel-heading {
+  color:#fff;
+  background-color:#3c763d;
+  border-color: #3c763d;
+}
+
+.navbar-right {
+  margin-right: 0px;
+}
+
+#time {
+  /*font-size: 21.428571429em;*/
+  font-size: 25em;
+  font-weight: 900;
+}
+
+small.text-muted {
+  font-size: 0.5714285714em;
+  font-weight: 100;
+}
+.panel-heading {
+  font-size: 3.5714285714em;
+  font-weight: 600;
+}
+.panel-body {
+  font-size: 4.2857142857em;
+  font-weight: 400;
+}
+.col-md-2>.panel>.panel-body{
+  color: #fff;
+  background-color: #3c763d;
+}
+
+.well-lg {
+  font-size: 8em;
+  font-weight: bolder;
+  line-height:1.35;
+}
